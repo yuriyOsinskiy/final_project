@@ -4,6 +4,7 @@ pipeline {
     stage('1') {
       steps {
         sh "date"
+        sh "ls -lah"
         }
       }
     }
