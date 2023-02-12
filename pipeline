@@ -5,6 +5,7 @@ pipeline {
       steps {
         sh "date"
         sh "ls -lah"
+        sh "scp -i '/home/ubuntu/osinskyi.pem' index.html ubuntu@52.59.96.102:/var/www/html/"
         }
       }
     }
