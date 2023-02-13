@@ -5,7 +5,8 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh """curl -o /dev/null -s -w \"%{http_code}\n\" http://3.76.8.147"""
+                        def resp_srv1 = sh(script: 'curl -o /dev/null -s -w "%{http_code}\n" http://3.120.247.124', returnStdout: true)
+                        sh "echo ${resp_srv1}"
                     }
                     catch (err) {
                         echo err.getMessage()
@@ -14,9 +15,11 @@ pipeline {
             }
         }
         stage ('deploy to servers') {
-            steps {
-                sh "ls -lah /var/lib/jenkins/"
-                sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@3.76.8.147:/var/www/html"
+            if (${resp_srv1} == '200') {
+                sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@3.120.247.124:/var/www/html"
+            }
+            else {
+                sh "echo "Server_1 not responding""
             }
         }
     }
