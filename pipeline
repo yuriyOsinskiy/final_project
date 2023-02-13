@@ -5,7 +5,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh """curl -I http://3.76.8.147 | grep HTTP | awk \'{print \$2}\' """
+                        sh """curl -o /dev/null -s -w \"%{http_code}\n\" http://3.76.8.147"""
                     }
                     catch (err) {
                         echo err.getMessage()
