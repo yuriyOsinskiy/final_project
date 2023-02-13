@@ -17,7 +17,7 @@ pipeline {
         stage ('deploy to servers') {
             steps {
                 script {
-                    if (${resp_srv1} == '200') {
+                    if ("\${resp_srv1}" == '200') {
                         sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@3.120.247.124:/var/www/html"
                     }
                     else {
