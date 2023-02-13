@@ -1,22 +1,22 @@
 pipeline {
-  agent any
-  stages {
-    stage ("check servers alive")
-      steps {
-        script {
-          try {
-              sh """curl -I http://3.76.8.147 | grep HTTP | awk \'{print \$2}\' """
-          }
-          catch (err) {
-              echo err.getMessage()
-          }
+    agent any
+    stages {
+        stage ("check servers alive")
+            steps {
+                script {
+                    try {
+                        sh """curl -I http://3.76.8.147 | grep HTTP | awk \'{print \$2}\' """
+                    }
+                    catch (err) {
+                        echo err.getMessage()
+                    }
+                }
+            }
+        stage ('deploy to servers') {
+            steps {
+                sh "ls -lah /var/lib/jenkins/"
+                sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@3.76.8.147:/var/www/html"
+            }
         }
-      }
-    stage ('deploy to servers') {
-      steps {
-        sh "ls -lah /var/lib/jenkins/"
-        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@3.76.8.147:/var/www/html"
-        }
-      }
     }
-  }
+}
