@@ -34,7 +34,7 @@ pipeline {
                 script {
                     sh "echo ${env.resp1}"
                     if ( env.resp1.contains('200') ) {
-                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@"${webserver1_ip}":/var/www/html"
+                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@\"${webserver1_ip}\":/var/www/html"
                     }
                     else {
                         sh "echo \"Server_1 not responding\""
@@ -43,7 +43,7 @@ pipeline {
                 script {
                     sh "echo ${env.resp2}"
                     if ( env.resp2.contains('200') ) {
-                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@"${webserver2_ip}":/var/www/html"
+                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@\"${webserver2_ip}\":/var/www/html"
                     }
                     else {
                         sh "echo \"Server_2 not responding\""
