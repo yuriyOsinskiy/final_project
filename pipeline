@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage ("check servers alive")
+        stage ("check servers alive") {
             steps {
                 script {
                     try {
@@ -12,6 +12,7 @@ pipeline {
                     }
                 }
             }
+        }
         stage ('deploy to servers') {
             steps {
                 sh "ls -lah /var/lib/jenkins/"
