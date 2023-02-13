@@ -1,12 +1,27 @@
 pipeline {
     agent any
+    environment {
+        webserver1_ip = '3.120.247.124'
+        webserver2_ip = '3.124.11.4'
+    }
     stages {
         stage ("check servers alive") {
             steps {
                 script {
                     try {
-                        def env.resp_srv1 = sh(script: 'curl -o /dev/null -s -w "%{http_code}\n" http://3.120.247.124', returnStdout: true)
+                        def resp_srv1 = sh(script: 'curl -o /dev/null -s -w "%{http_code}\n" http://"${webserver1_ip}"', returnStdout: true)
+                        env.resp1 = resp_srv1
                         sh "echo ${resp_srv1}"
+                    }
+                    catch (err) {
+                        echo err.getMessage()
+                    }
+                }
+                script {
+                    try {
+                        def resp_srv2 = sh(script: 'curl -o /dev/null -s -w "%{http_code}\n" http://"${webserver2_ip}"', returnStdout: true)
+                        env.resp2 = resp_srv2
+                        sh "echo ${resp_srv2}"
                     }
                     catch (err) {
                         echo err.getMessage()
@@ -17,11 +32,21 @@ pipeline {
         stage ('deploy to servers') {
             steps {
                 script {
-                    if ("${env.resp_srv1}" == '200') {
-                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@3.120.247.124:/var/www/html"
+                    sh "echo ${env.resp1}"
+                    if ( env.resp1.contains('200') ) {
+                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@"${webserver1_ip}":/var/www/html"
                     }
                     else {
-                        sh "echo "Server_1 not responding""
+                        sh "echo \"Server_1 not responding\""
+                    }
+                }
+                script {
+                    sh "echo ${env.resp2}"
+                    if ( env.resp2.contains('200') ) {
+                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@"${webserver2_ip}":/var/www/html"
+                    }
+                    else {
+                        sh "echo \"Server_2 not responding\""
                     }
                 }
             }
