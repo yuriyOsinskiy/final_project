@@ -15,11 +15,15 @@ pipeline {
             }
         }
         stage ('deploy to servers') {
-            if (${resp_srv1} == '200') {
-                sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@3.120.247.124:/var/www/html"
-            }
-            else {
-                sh "echo "Server_1 not responding""
+            steps {
+                script {
+                    if (${resp_srv1} == '200') {
+                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@3.120.247.124:/var/www/html"
+                    }
+                    else {
+                        sh "echo "Server_1 not responding""
+                    }
+                }
             }
         }
     }
