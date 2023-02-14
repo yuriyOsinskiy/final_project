@@ -1,0 +1,92 @@
+---
+- hosts: jenkins
+  become: true
+  vars:
+    ssh_key_path: /home/ubuntu/osinskyi.pem
+    container_name: jenkins
+    container_image: jenkins/jenkins:lts-jdk11
+
+  tasks:
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu jammy stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
+
+    - name: Pull default Docker image
+      community.docker.docker_image:
+        name: "{{ container_image }}"
+        source: pull
+
+    - name: Create Docker Jenkins Container
+      docker_container:
+        name: "{{ container_name }}"
+        image: "{{ container_image }}"
+        ports:
+         - "8080:8080"
+         - "50000:50000"
+        volumes:
+         - "jenkins_home:/var/lib/jenkins"
+         - "/var/run/docker.sock:/var/run/docker.sock"
+        state: started
+
+    - name: Wait for runnig jenkins container
+      ansible.builtin.pause:
+        seconds: 15
+
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: /home/osinskyi/ansible/osinskyi.pem
+        dest: /home/ubuntu
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
+    - name: Copy ssh key to docker container
+      shell: docker cp "{{ ssh_key_path }}" "{{ container_name }}":/var/lib/jenkins/
+
+    - name: Change permissions for ssh key
+      community.docker.docker_container_exec:
+        container: "{{ container_name }}"
+        command: /bin/bash -c "chmod 400 /var/lib/jenkins/osinskyi.pem"
+
+    - name: Get jenkins initialAdminPassword 
+      community.docker.docker_container_exec:
+        container: "{{ container_name }}"
+        command: /bin/bash -c "cat /var/jenkins_home/secrets/initialAdminPassword"
+      register: jenkins_password
+
+    - debug: msg="{{jenkins_password.stdout}}"
