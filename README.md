@@ -14,6 +14,7 @@
 
 4) Copy file main.tf to terraform folder
    - export credential variables for work terraform with AWS
+   - cd to terraform folder
    - terraform init (in some folder for terraform)
 
 5) Terraform plan (for check main.tf)
