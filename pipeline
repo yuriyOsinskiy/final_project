@@ -3,6 +3,7 @@ pipeline {
     environment {
         webserver1_ip = ''
         webserver2_ip = ''
+        files = 'index.html osinskyi.jpg style.css'
     }
     stages {
         stage ("check servers alive") {
@@ -34,7 +35,7 @@ pipeline {
                 script {
                     sh "echo ${env.resp1}"
                     if ( env.resp1.contains('200') ) {
-                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@\"${webserver1_ip}\":/var/www/html"
+                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem \"${files}\" ubuntu@\"${webserver1_ip}\":/var/www/html"
                     }
                     else {
                         sh "echo \"Server_1 not responding\""
@@ -43,7 +44,7 @@ pipeline {
                 script {
                     sh "echo ${env.resp2}"
                     if ( env.resp2.contains('200') ) {
-                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem * ubuntu@\"${webserver2_ip}\":/var/www/html"
+                        sh "scp -oStrictHostKeyChecking=no -i /var/lib/jenkins/osinskyi.pem \"${files}\" ubuntu@\"${webserver2_ip}\":/var/www/html"
                     }
                     else {
                         sh "echo \"Server_2 not responding\""
