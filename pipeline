@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        webserver1_ip = '3.120.247.124'
-        webserver2_ip = '3.124.11.4'
+        webserver1_ip = ''
+        webserver2_ip = ''
     }
     stages {
         stage ("check servers alive") {
