@@ -74,6 +74,7 @@ resource "aws_instance" "webserver1" {
   key_name = "osinskyi"
   user_data = <<EOF
 #!/usr/bin/env bash
+apt update
 apt install -y apache2
 systemctl enable apache2
 echo "<html><body bgcolor=gray><center><h1><font color=red>WEBserver-1</h1></center></body></html>" > /var/www/html/index.html
@@ -92,6 +93,7 @@ resource "aws_instance" "webserver2" {
   key_name = "osinskyi"
   user_data = <<EOF
 #!/usr/bin/env bash
+apt update
 apt install -y apache2
 systemctl enable apache2
 echo "<html><body bgcolor=gray><center><h1><font color=red>WEBserver-2</h1></center></body></html>" > /var/www/html/index.html
