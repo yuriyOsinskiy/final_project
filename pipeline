@@ -3,7 +3,7 @@ pipeline {
     environment {
         webserver1_ip = '3.70.171.170'
         webserver2_ip = '3.125.39.170'
-        files = '"/var/jenkins_home/workspace/pipeline from GH/index.html" "/var/jenkins_home/workspace/pipeline from GH/osinskyi.jpg" "/var/jenkins_home/workspace/pipeline from GH/style.css"'
+        files = '"/var/jenkins_home/workspace/pipeline_from_gh/index.html" "/var/jenkins_home/workspace/pipeline_from_gh/osinskyi.jpg" "/var/jenkins_home/workspace/pipeline_from_gh/style.css"'
     }
     stages {
         stage ("check servers alive") {
